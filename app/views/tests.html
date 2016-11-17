@@ -1,0 +1,67 @@
+<div>
+  <h5 class="light header">{{pageTitle}}</h5>
+  <blockquote ng-show="!hasContent && loaded">{{noContentMessage}}</blockquote>
+  <div class="row center-align">
+    <div class="col s12 center-align" ng-if="!loaded">
+      <div class="progress blue-grey lighten-3">
+        <div class="indeterminate red darken-1"></div>
+      </div>
+      <p>{{connectMessage}}</p>
+    </div>
+  </div>
+  <form name="testConfigForm" action="#">
+    <div ng-show="hasContent">
+      <!--Clusters-->
+      <p class="card-title">{{clusterTitle}}</p>
+
+      <span ng-repeat="cluster in clusters">
+         <p>
+           <input type="hidden" ng-init="$parent.config.clusters[$index].id = cluster.id"
+                  ng-model="$parent.config.clusters[$index].id" ng-value="cluster.id"/>
+
+           <input class="checkbox" ng-init="$parent.config.clusters[$index].selected = false"
+                  ng-model="$parent.config.clusters[$index].selected" name="clusters[]" type="checkbox"
+                  id="{{cluster.id}}" ng-change="update()"/>
+
+           <label class="checkbox" for="{{cluster.id}}">{{cluster.name}}</label>
+        </p>
+      </span>
+      <!---->
+
+      <!-- Show available loadtests only-->
+      <p class="card-title">{{loadtestTitle}}</p>
+      <span ng-repeat="test in availableTests | filter:{category:'loadtest'}">
+          <p class="range-field">
+
+            <input type="hidden" ng-init="$parent.config.loadtest[$index].id = test.id"
+                   ng-model="$parent.config.loadtest[$index].id" ng-value="test.id"/>
+            <label class="range-label" for="{{test.id}}">{{test.name}}</label>
+            <input integer class="range" type="range" ng-init="$parent.config.loadtest[$index].rps = 0"
+                   ng-model="$parent.config.loadtest[$index].rps" id="{{test.id}}" min="0" max="50"
+                   ng-mouseup="update()"
+            />
+          </p>
+      </span>
+      <p class="card-title">{{rollingUpdateTitle}}</p>
+      <span ng-repeat="rTest in availableTests | filter:{category:'rollingupdate'}">
+          <p class="range-field">
+
+            <input type="hidden" ng-init="$parent.config.rollingtest[$index].id = rTest.id"
+                   ng-model="$parent.config.rollingtest.id" ng-value="rTest.id"/>
+            <label class="range-label" for="{{rTest.id}}">{{rollingUpdateInfo}}</label>
+            <input integer class="range" type="range" ng-init="$parent.config.rollingtest[$index].uph = 0"
+                   ng-model="$parent.config.rollingtest[$index].uph" id="{{rTest.id}}" min="0" max="20"
+                   ng-mouseup="update()"
+            />
+          </p>
+      </span>
+      <!-- TODO CHAOS MONKEY -->
+      <!---->
+
+      <p class="right">
+        <a class="waves-effect waves-light btn red darken-1" ng-mousedown="resolveMethod()">{{buttonText}}</a>
+      </p>
+    </div>
+  </form>
+</div>
+

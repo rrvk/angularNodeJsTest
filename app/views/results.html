@@ -1,0 +1,129 @@
+<div>
+  <h5 class="light header left-align">{{pageTitle}}</h5>
+  <blockquote class="left-align" ng-if="showMessage()">
+    <!-- Test not started || no results -->
+    {{ getMessage() }}
+  </blockquote>
+
+  <div class="row center-align" ng-if="showLoading()">
+    <!-- Socket (re)connecting when test is started -->
+    <div class="progress blue-grey lighten-3 col s12">
+      <div class="indeterminate red darken-1"></div>
+    </div>
+    <div class="col s12 center-align">{{socket.connectMessage}}</div>
+  </div>
+
+  <div class="row" ng-repeat="result in results | filter: {type: 'loadtest' } ">
+
+    <div class="section-header col s12">{{ getCluster(result.clusterId) }}</div>
+    <div class="section-sub-header col s12">{{getTest(result.testId )}}</div>
+
+    <div class="col s2 m1">{{ amount }}</div>
+    <div class="col s11">{{ result.responses | number:0}}</div>
+    <div class="divider-hidden col s12"></div>
+
+    <div class="gauge-row">
+      <!-- RESPONSE TIME-->
+      <div class="container col s6 m4 center-align">
+        <div class="gauge-wrapper center-align">
+          <div class="gauge-header">{{responseTime}}</div>
+          <round-progress
+            max="result.maxTime"
+            current="result.time"
+            color="{{ fillColor }}"
+            bgcolor="{{ bgColor }}"
+            radius="{{ radius }}"
+            semi="isSemi"
+            responsive="responsive"
+            stroke="{{ stroke }}"
+            duration="{{ duration }}"
+            animation="{{ currentAnimation }}"
+            offset="{{ offset }}">
+          </round-progress>
+          <div class="flow-text gauge-text">{{ result.time | number:0}} / {{ result.maxTime | number:0 }} {{ms}}</div>
+        </div>
+      </div>
+      <!---->
+
+      <!-- ERROR MARGE -->
+      <div class="container col s6 m4 center-align">
+        <div class="gauge-wrapper center-align">
+          <div class="gauge-header">{{errorMarge}}</div>
+          <round-progress
+            max="100"
+            current="result.error"
+            color="{{ fillColor }}"
+            bgcolor="{{ bgColor }}"
+            radius="{{ radius }}"
+            semi="isSemi"
+            responsive="responsive"
+            stroke="{{ stroke }}"
+            duration="{{ duration }}"
+            animation="{{ currentAnimation }}"
+            offset="{{ offset }}">
+          </round-progress>
+          <div class="flow-text center-align gauge-text">{{ result.error | percentage:2 }}</div>
+        </div>
+      </div>
+      <!---->
+
+      <!-- THROUGHPUT-->
+      <div class="container col s6 m4 center-align">
+        <div class="gauge-wrapper">
+          <div class="gauge-header">{{throughput}}</div>
+          <round-progress
+            max="result.maxThroughput"
+            current="result.throughput"
+            color="{{ fillColor }}"
+            bgcolor="{{ bgColor }}"
+            radius="{{ radius }}"
+            semi="isSemi"
+            responsive="responsive"
+            stroke="{{ stroke }}"
+            duration="{{ duration }}"
+            animation="{{ currentAnimation }}"
+            offset="{{ offset }}">
+          </round-progress>
+          <div class="flow-text center-align gauge-text">{{ result.throughput | number:1 }} / {{result.maxThroughput |
+            number:1}} {{rps}}
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="divider-hidden col s12"></div>
+  </div>
+
+  <div ng-repeat="result in results | filter: {type: 'rollingupdate' }">
+    <div class="row" ng-repeat="resultDetail in result.rolling">
+
+      <div class="section-header col s12">{{ getCluster(resultDetail.clusterId) }}</div>
+      <div class="section-sub-header col s12">rollingupdate</div>
+
+      <div class="container col s6 m4 center-align">
+        <div class="gauge-wrapper">
+          <div class="gauge-header">V1 naar V2</div>
+          <round-progress
+            max="resultDetail.total"
+            current="resultDetail.v2"
+            color="{{ fillColor }}"
+            bgcolor="{{ bgColor }}"
+            radius="{{ radius }}"
+            semi="isSemi"
+            responsive="responsive"
+            stroke="{{ stroke }}"
+            duration="{{ duration }}"
+            animation="{{ currentAnimation }}"
+            offset="{{ offset }}">
+          </round-progress>
+          <div class="flow-text center-align gauge-text">{{ resultDetail.v2/resultDetail.total*100 }} % voltooid
+          </div>
+        </div>
+
+      </div>
+      <div class="divider-hidden col s12"></div>
+
+    </div>
+  </div>
+</div>
